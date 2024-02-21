@@ -29,7 +29,7 @@ router.post("/", (res, req) => {
     label: res.body.label,
   });
   note.save();
-  return getNotes();
+  return res.send(note)
 });
 async function getNotes() {
   const pageNumber = 1;
