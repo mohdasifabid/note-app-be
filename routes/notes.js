@@ -20,17 +20,24 @@ const schema = new mongoose.Schema({
 //model
 const Note = mongoose.model("Note", schema);
 
-router.post("/", (res, req) => {
+router.post("/", async (req, res) => {
   const { error } = schemaValidator(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  const note = new Note({
-    title: res.body.title,
-    content: res.body.content,
-    label: res.body.label,
-  });
-  note.save();
-  return res.send(note)
+
+  try {
+    const note = new Note({
+      title: req.body.title,
+      content: req.body.content,
+      label: req.body.label,
+    });
+    const savedNote = await note.save();
+    return res.status(201).send(savedNote);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
+  }
 });
+
 async function getNotes() {
   const pageNumber = 1;
   const pageSize = 10;
